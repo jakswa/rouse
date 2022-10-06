@@ -1,0 +1,11 @@
+[[cmds]]
+label = "bursty"
+cmd = "sleep 2; echo 'oh yeah'; echo 'its running'; echo 'finished.'; sleep 2; echo 'last one'"
+
+[[cmds]]
+label = "regular"
+cmd = "sleep 1; echo 'darn yeah'; sleep 1; echo 'darn tootin';"
+
+[[cmds]]
+label = "random-output"
+cmd = "sleep 2; head -n 1 /dev/random | base64 | head -n 3"

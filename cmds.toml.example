@@ -1,7 +1,0 @@
-[[cmds]]
-label = "wtf"
-cmd = "sleep 4; echo 'fuck yeah'"
-
-[[cmds]]
-label = "wtf2"
-cmd = "sleep 2; echo 'fuck yeah'"

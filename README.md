@@ -2,6 +2,8 @@
 
 This is a barebones attempt at cloning NPM's concurrently package.
 
+![image](https://user-images.githubusercontent.com/137793/194436290-8cff0e89-e01e-4ce9-a156-974e0e4913da.png)
+
 ## Examples
 
 1. With command line arguments
@@ -29,3 +31,5 @@ $ rouse
 [wtf2] fuck yeah
 [wtf] fuck yeah
 ```
+
+

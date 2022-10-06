@@ -1,3 +1,4 @@
+use owo_colors::{AnsiColors::*, OwoColorize};
 use serde::Deserialize;
 use std::io::{BufRead, BufReader};
 use std::process::{Child, Command, Stdio};
@@ -15,6 +16,23 @@ struct CmdCfg {
 }
 
 fn main() {
+    let mut styles = vec![
+        Red,
+        Green,
+        Yellow,
+        Blue,
+        Magenta,
+        Cyan,
+        BrightRed,
+        BrightGreen,
+        BrightYellow,
+        BrightBlue,
+        BrightMagenta,
+        BrightCyan,
+    ];
+    fastrand::shuffle(&mut styles);
+    let mut color_carousel = styles.iter().cycle();
+
     let mut children = build_config()
         .cmds
         .into_iter()
@@ -30,20 +48,21 @@ fn main() {
             cmd.stderr(Stdio::piped());
 
             let mut child = cmd.spawn().expect("failed to execute");
+            let mystyle = color_carousel.next().unwrap().clone();
 
             let err = BufReader::new(child.stderr.take().unwrap());
-            let errtitle = title.clone();
+            let errtitle = format!("[{}]", title);
             let stderr = std::thread::spawn(move || {
                 err.lines().for_each(|line| {
-                    eprintln!("[{}] {}", errtitle, line.unwrap());
+                    eprintln!("{} {}", errtitle.color(mystyle), line.unwrap());
                 });
             });
 
             let out = BufReader::new(child.stdout.take().unwrap());
-            let outtitle = title.clone();
+            let outtitle = format!("[{}]", title);
             let stdout = std::thread::spawn(move || {
                 out.lines().for_each(|line| {
-                    println!("[{}] {}", outtitle, line.unwrap());
+                    println!("{} {}", outtitle.color(mystyle), line.unwrap());
                 });
             });
 
