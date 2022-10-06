@@ -4,34 +4,30 @@ use std::process::{Child, Command, Stdio};
 use std::thread::JoinHandle;
 
 #[derive(Deserialize)]
-struct CmdsToml {
-    cmds: std::collections::HashMap<String, CmdCfg>,
+struct CmdList {
+    cmds: Vec<CmdCfg>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 struct CmdCfg {
-    args: Option<Vec<String>>,
-    cmd: Option<String>,
+    cmd: String,
+    label: Option<String>,
 }
 
 fn main() {
-    let toml_str = std::fs::read_to_string("./cmds.toml").unwrap();
-    let config: CmdsToml = toml::from_str(&toml_str).unwrap();
-
-    let mut children = config
+    let mut children = build_config()
         .cmds
         .into_iter()
-        .map(|(title, cmd_cfg)| {
-            let mut cmd = Command::new(cmd_cfg.cmd.unwrap_or(title.clone()));
+        .map(|cmd_cfg| {
+            let title = cmd_cfg
+                .label
+                .unwrap_or(cmd_cfg.cmd.split(" ").next().unwrap().to_string());
+            let mut cmd = Command::new("sh");
+            cmd.arg("-c");
+            cmd.arg(cmd_cfg.cmd.clone());
 
             cmd.stdout(Stdio::piped());
             cmd.stderr(Stdio::piped());
-
-            if let Some(args) = cmd_cfg.args {
-                args.iter().for_each(|arg| {
-                    cmd.arg(arg);
-                });
-            }
 
             let mut child = cmd.spawn().expect("failed to execute");
 
@@ -60,4 +56,21 @@ fn main() {
         stdout.join().expect("stdout errored");
         stderr.join().expect("stderr errored");
     }
+}
+
+fn build_config() -> CmdList {
+    let run_args = std::env::args();
+    if run_args.len() > 1 {
+        let cmd_list = run_args
+            .skip(1)
+            .map(|run_arg| CmdCfg {
+                cmd: run_arg.clone(),
+                label: None,
+            })
+            .collect::<Vec<CmdCfg>>();
+        return CmdList { cmds: cmd_list };
+    } else if let Ok(toml_str) = std::fs::read_to_string("./cmds.toml") {
+        return toml::from_str::<CmdList>(&toml_str).unwrap();
+    }
+    panic!("was not able to figure out what you want to run")
 }

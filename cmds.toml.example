@@ -1,19 +1,7 @@
-[cmds.sleep3]
-cmd = "echo"
-args = ["hello"]
+[[cmds]]
+label = "wtf"
+cmd = "sleep 4; echo 'fuck yeah'"
 
-[cmds.sleep5]
-cmd = "bash"
-args = ["./script.sh"]
-
-[cmds.cargo]
-cmd = "cargo"
-args = ["watch"]
-
-[cmds.sleep7]
-cmd = "bash"
-args = ["./script.sh"]
-
-[cmds.sleep8]
-cmd = "bash"
-args = ["./script.sh"]
+[[cmds]]
+label = "wtf2"
+cmd = "sleep 2; echo 'fuck yeah'"
